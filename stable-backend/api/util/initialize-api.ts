@@ -4,10 +4,14 @@ import { errorHandlerMiddleware } from '../middlewares/error-handler';
 import { corsMiddleware } from '../middlewares/cors';
 import { redisPublisher } from './redis-publisher';
 import { redisSubscriber } from './redis-subscriber';
+import { mysql } from './mysql';
 
 export const initializeApi = async (): Promise<Express> => {
   await redisPublisher.init();
   await redisSubscriber.init();
+  console.log('Redis connections successfully established.')
+  await mysql.init();
+  console.log('DB connection successfully established.')
 
   const server: Express = express();
 
