@@ -10,6 +10,7 @@ class MySqlConnection {
     this._sequelize = new Sequelize('db', 'user', 'password', {
       host: 'localhost',
       dialect: 'mysql',
+      logging: false
     });
     this.defineModels();
   }

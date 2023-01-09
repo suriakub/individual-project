@@ -1,26 +1,32 @@
 import express, { Express } from 'express';
 import { imageGeneratorRouter } from '../routes/generators.route';
 import { errorHandlerMiddleware } from '../middlewares/error-handler';
+import { mysql } from '../services/mysql';
+import { redisPublisher } from '../services/redis-publisher';
+import { redisSubscriber } from '../services/redis-subscriber';
 import { corsMiddleware } from '../middlewares/cors';
-import { redisPublisher } from './redis-publisher';
-import { redisSubscriber } from './redis-subscriber';
-import { mysql } from './mysql';
+import { socketService } from '../services/socketio.service';
+import http from 'http';
 
-export const initializeApi = async (): Promise<Express> => {
+export const initializeApi = async (): Promise<http.Server> => {
   await redisPublisher.init();
   await redisSubscriber.init();
-  console.log('Redis connections successfully established.')
+  console.log('Redis connections successfully established.');
   await mysql.init();
-  console.log('DB connection successfully established.')
+  console.log('DB connection successfully established.');
 
-  const server: Express = express();
+  const expressServer: Express = express();
 
-  server.use(corsMiddleware);
-  server.use(express.json());
-  server.use(express.urlencoded({extended: true}));
-  
-  server.use('/generators', imageGeneratorRouter);
-  server.use(errorHandlerMiddleware);
+  expressServer.use(corsMiddleware);
+  expressServer.use(express.json());
+  expressServer.use(express.urlencoded({ extended: true }));
 
+  expressServer.use('/generators', imageGeneratorRouter);
+  expressServer.use(errorHandlerMiddleware);
+
+  // we need to transform the express server into http server otherwise 
+  // socket.io won't work
+  const server = http.createServer(expressServer);
+  socketService.init(server);
   return server;
 };
