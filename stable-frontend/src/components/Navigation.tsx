@@ -10,8 +10,8 @@ const user = {
 };
 
 const navigation = [
-  { name: 'Image Generation', href: '#', current: true },
-  { name: 'My Images', href: '#', current: false },
+  { name: 'Image Generation', href: '/generator', current: false },
+  { name: 'My Images', href: '/my-images', current: false }
 ];
 
 const userNavigation = [

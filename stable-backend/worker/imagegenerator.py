@@ -69,7 +69,7 @@ class ImageGenerator:
             for i, t in tqdm(enumerate(self._scheduler.timesteps)):
 
                 # publish progress
-                if (i != 0 and i % (steps // 5) == 0):
+                if (i != 0 and steps != 0 and i % (steps // 10) == 0):
                     self._publisher.publish({"type": WorkerResponseType.PROGRESS, "progress": 100 * i // steps, "userId": user_id})
                 
                 # expand the latents if we are doing classifier-free guidance to avoid doing two forward passes.

@@ -1,43 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import { shallow } from 'zustand/shallow';
 import './App.css';
-import GeneratorForm from './components/GeneratorForm';
 import Navigation from './components/Navigation';
-
+import { useSocketStore } from './store/socket.store';
 import socket from './util/socket-connection';
+
 window.Buffer = window.Buffer || require('buffer').Buffer;
 
-export default function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
+export default function App(props: { children?: React.ReactNode }) {
+  const [setProgress, setImage] = useSocketStore(
+    (state) => [state.setProgress, state.setImage, state.progress, state.image],
+    shallow
+  );
 
   useEffect(() => {
-    socket.on('connect', () => {
-      setIsConnected(true);
+    socket.on('progress', (progress) => {
+      setProgress(progress);
     });
-    socket.on('disconnect', () => {
-      setIsConnected(false);
+    socket.on('image', (image) => {
+      setProgress(100);
+      setImage(image);
     });
 
     return function cleanup() {
-      socket.off('connect');
-      socket.off('disconnect');
+      socket.off('progress');
+      socket.off('image');
     };
-  }, []);
+  }, [setImage, setProgress]);
 
   return (
-    <>
-      <div className="min-h-full">
-        <Navigation />
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Image Generation
-            </h1>
-          </div>
-        </header>
-        <main>
-          <GeneratorForm />
-        </main>
-      </div>
-    </>
+    <div className="min-h-full">
+      <Navigation />
+      {props?.children}
+      <Outlet />
+    </div>
   );
 }

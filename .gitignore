@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 stable-backend/images/*.jpg
+other/
+
+.vscode/

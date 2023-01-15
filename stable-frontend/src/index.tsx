@@ -3,13 +3,40 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import GeneratorPage from './pages/GeneratorPage';
+import ImagesPage from './pages/ImagesPage';
+import ErrorPage from './pages/ErrorPage';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    errorElement: (
+      <App>
+        <ErrorPage />
+      </App>
+    ),
+    children: [
+      { path: '', element: <GeneratorPage /> },
+      {
+        path: 'generator',
+        element: <GeneratorPage />
+      },
+      {
+        path: 'my-images',
+        element: <ImagesPage />
+      }
+    ]
+  }
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
