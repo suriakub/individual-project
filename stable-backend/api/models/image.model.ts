@@ -1,6 +1,4 @@
-import { DataTypes, Model, ModelStatic, Sequelize } from 'sequelize';
-import { Models } from './models';
-import { ImageCollection } from './image-collection.model';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export class Image extends Model {
   name?: string;
@@ -9,7 +7,7 @@ export class Image extends Model {
   order?: number;
 }
 
-export function defineImageModel(sequelize: Sequelize, imageCollection: ModelStatic<ImageCollection>) {
+export function defineImageModel(sequelize: Sequelize) {
   const structure = {
     name: {
       type: DataTypes.STRING,
@@ -38,6 +36,5 @@ export function defineImageModel(sequelize: Sequelize, imageCollection: ModelSta
   };
   Image.init(structure, config);
 
-  Image.belongsTo(imageCollection, {foreignKey: 'collectionId'});
   return Image;
 }

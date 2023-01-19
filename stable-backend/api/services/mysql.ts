@@ -10,7 +10,7 @@ class MySqlConnection {
     this._sequelize = new Sequelize('db', 'user', 'password', {
       host: 'localhost',
       dialect: 'mysql',
-      logging: false
+      // logging: false,
     });
     this.defineModels();
   }
@@ -18,15 +18,21 @@ class MySqlConnection {
   init = async () => {
     await this._sequelize.authenticate();
     await this._sequelize.sync({ alter: true });
+    // await this._sequelize.sync({ force: true });
     await this.populateDb();
   };
 
   private defineModels() {
     const user = defineUserModel(this._sequelize);
-    const imageCollection = defineImageCollectionModel(this._sequelize, user);
-    const image = defineImageModel(this._sequelize, imageCollection);
-    const models = { user, imageCollection, image };
+    const imageCollection = defineImageCollectionModel(this._sequelize);
+    const image = defineImageModel(this._sequelize);
 
+    user.hasMany(imageCollection);
+    // imageCollection.belongsTo(user, { foreignKey: 'userId' });
+    imageCollection.hasMany(image, {foreignKey: 'collectionId'});
+    // image.belongsTo(imageCollection, { foreignKey: 'collectionId' });
+
+    const models = { user, imageCollection, image };
     return models;
   }
 
@@ -41,7 +47,6 @@ class MySqlConnection {
     const image2 = await Image.findOrCreate({
       where: { name: 'fuji2.jpg', collectionId: imageCollection[0].uuid, order: 1 },
     });
-    
   }
 
   get sequelize() {

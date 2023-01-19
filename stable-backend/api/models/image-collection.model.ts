@@ -1,6 +1,4 @@
-import { DataTypes, Model, ModelStatic, Sequelize } from 'sequelize';
-import { Image } from './image.model';
-import { User } from './user.model';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export class ImageCollection extends Model {
   uuid?: string;
@@ -8,12 +6,12 @@ export class ImageCollection extends Model {
   userId?: string;
 }
 
-export function defineImageCollectionModel(sequelize: Sequelize, user: ModelStatic<User>) {
+export function defineImageCollectionModel(sequelize: Sequelize) {
   const structure = {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     uuid: {
       primaryKey: true,
@@ -23,7 +21,7 @@ export function defineImageCollectionModel(sequelize: Sequelize, user: ModelStat
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
-    }
+    },
   };
 
   const config = {
@@ -33,7 +31,6 @@ export function defineImageCollectionModel(sequelize: Sequelize, user: ModelStat
   };
 
   ImageCollection.init(structure, config);
-  ImageCollection.belongsTo(user, {foreignKey: 'userId'});
 
   return ImageCollection;
 }
