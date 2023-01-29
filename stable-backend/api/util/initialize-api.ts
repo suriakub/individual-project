@@ -13,13 +13,13 @@ export const initializeApi = async (): Promise<http.Server> => {
   await redisPublisher.init();
   await redisSubscriber.init();
   console.log('Redis connections successfully established.');
-  await mysql.init();
-  console.log('DB connection successfully established.');
+  // await mysql.init();
+  // console.log('DB connection successfully established.');
 
   const expressServer: Express = express();
 
   expressServer.use(corsMiddleware);
-  expressServer.use(express.json());
+  expressServer.use(express.json({limit: '10mb'}));
   expressServer.use(express.urlencoded({ extended: true }));
   expressServer.use(express.static('../images'));
 

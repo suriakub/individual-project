@@ -4,6 +4,7 @@ import { shallow } from 'zustand/shallow';
 import { useSocketStore } from '../store/socket.store';
 import { useFormStore } from '../store/form.store';
 import ImageDraw from '../components/ImageDraw';
+import ImageUpload from '../components/ImageUpload';
 
 export default function GeneratorPage() {
   const [prompt, setPrompt, steps, setSteps, formImage, setFormImage] =
@@ -90,12 +91,12 @@ export default function GeneratorPage() {
           Image to Image
         </button>
         <div className="px-4 py-6 sm:px-0 mx-auto">
-          <div className="flex flex-wrap -mx-3 mb-2">
-            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <div className="flex flex-wrap -mx-3 mb-2 justify-center gap-12">
+            <div className="px-3 mb-6 md:mb-0">
               {showImage(image)}
-              {/* <ImageUpload setImage={setFormImage} imageList={formImage} /> */}
+              <ImageUpload setImage={setFormImage} imageList={formImage} />
             </div>
-            <div className="w-full md:w-1/2 mb-6 md:mb-0">
+            <div className="w-full md:w-1/3 md:min-w-[33%] mb-6 md:mb-0">
               <form className="w-full max-w-lg" onSubmit={handleSubmit}>
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"

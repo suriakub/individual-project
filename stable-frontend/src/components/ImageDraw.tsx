@@ -4,7 +4,7 @@ import { ColorResult, SliderPicker } from 'react-color';
 import { ReactSketchCanvas, ReactSketchCanvasRef } from 'react-sketch-canvas';
 
 export default function ImageDraw({ image }: { image: string }) {
-  const [brushColor, setBrushColor] = useState('#fff');
+  const [brushColor, setBrushColor] = useState('#000');
   const [eraseMode, setEraseMode] = useState(false);
   const canvasRef = React.createRef<ReactSketchCanvasRef>();
 
@@ -13,8 +13,9 @@ export default function ImageDraw({ image }: { image: string }) {
   };
 
   const handleEraseToggle = () => {
-    canvasRef.current?.eraseMode(eraseMode);
+    // setting the state is an async operation
     setEraseMode(!eraseMode);
+    canvasRef.current?.eraseMode(!eraseMode);
   };
 
   return (
@@ -28,10 +29,14 @@ export default function ImageDraw({ image }: { image: string }) {
           strokeColor={brushColor}
           backgroundImage={image}
         />
-        <SliderPicker color={brushColor} onChange={handleChange} />
+        <SliderPicker
+          className="pt-5"
+          color={brushColor}
+          onChange={handleChange}
+        />
         <button
           className="bg-red-500 hover:bg-red-400 text-white mx-1 py-1 px-2 mt-3 rounded"
-          onClick={() => canvasRef.current?.resetCanvas()}
+          onClick={() => canvasRef.current?.clearCanvas()}
         >
           Clear
         </button>
@@ -50,7 +55,6 @@ export default function ImageDraw({ image }: { image: string }) {
         <label className="relative inline-flex items-center mb-5 cursor-pointer">
           <input
             type="checkbox"
-            value=""
             className="sr-only peer"
             onClick={handleEraseToggle}
           />
