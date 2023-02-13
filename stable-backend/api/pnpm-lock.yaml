@@ -6,6 +6,7 @@ specifiers:
   dotenv: ^16.0.3
   eslint: ^8.28.0
   express: ^4.18.2
+  express-validator: ^6.14.3
   mysql2: ^2.3.3
   nodemon: ^2.0.20
   prettier: 2.7.1
@@ -18,6 +19,7 @@ specifiers:
 dependencies:
   dotenv: 16.0.3
   express: 4.18.2
+  express-validator: 6.14.3
   mysql2: 2.3.3
   redis: 4.5.0
   sequelize: 6.25.6_mysql2@2.3.3
@@ -710,6 +712,14 @@ packages:
   /etag/1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /express-validator/6.14.3:
+    resolution: {integrity: sha512-c4b9NMdhskfcLbH/FchsSfCt4Vb14gKzcotG9zLS+VoOJDox57aGhCL+kmAu7cl+ytaSed+HD5jdJhel8DQsdg==}
+    engines: {node: '>= 8.0.0'}
+    dependencies:
+      lodash: 4.17.21
+      validator: 13.7.0
     dev: false
 
   /express/4.18.2:

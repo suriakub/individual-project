@@ -11,18 +11,15 @@ class RedisSubscriber {
       const jsonMessage: WorkerMessage = JSON.parse(message);
       console.log(`REDIS SUB: Received ${message}`);
 
-      // Message listeners
-      switch (jsonMessage.type) {
-        case WorkerMessageType.IMAGE_INFO:
-          const { filename } = jsonMessage as WorkerImageMessage;
+      try {
+        // Message listeners
+        if (jsonMessage.type === WorkerMessageType.IMAGE_INFO) {
+          const { filename, progress, userId } = jsonMessage as WorkerImageMessage;
           const image = fs.readFileSync(`../images/${filename}`, { encoding: 'base64' });
-          socketService.io.emit('image', image);
-          break;
-
-        case WorkerMessageType.PROGRESS:
-          const progressMessage = jsonMessage as WorkerProgressMessage;
-          socketService.io.emit('progress', progressMessage.progress);
-          break;
+          socketService.io.emit('image', { image, progress });
+        }
+      } catch (e) {
+        console.log(e);
       }
     });
   }
@@ -45,13 +42,9 @@ interface WorkerMessage {
 
 interface WorkerImageMessage extends WorkerMessage {
   filename: string;
-}
-
-interface WorkerProgressMessage extends WorkerMessage {
   progress: number;
 }
 
 enum WorkerMessageType {
-  PROGRESS = 'PROGRESS',
   IMAGE_INFO = 'IMAGE_INFO',
 }

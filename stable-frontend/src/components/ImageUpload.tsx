@@ -19,8 +19,6 @@ export default function ImageUpload({
     const imgSrc =
       image == null ? `${process.env.PUBLIC_URL}/blank.jpg` : image.dataURL;
 
-    console.log(image?.dataURL);
-
     return (
       <div className="relative cursor-pointer">
         {imageList.length > 0 ? (
@@ -46,7 +44,6 @@ export default function ImageUpload({
         isDragging,
         dragProps
       }) => (
-        // write your building UI
         <div className="upload__image-wrapper">
           <div
             className="max-w-md p-1 rounded-lg border-4 border-dashed border-gray-200"

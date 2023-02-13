@@ -1,7 +1,7 @@
 from redis import Redis
 import json
 import time
-from imagegenerator import ImageGenerator
+from image_generator import ImageGenerator
 from publisher import Publisher, WorkerResponseType
 from enum import Enum
 import traceback
@@ -51,7 +51,7 @@ class Worker:
             self._publisher.publish(
                 {"type": WorkerResponseType.ERROR, "error": str(e)})
             print("Error decoding message: " + str(e))
-            
+
         except Exception as e:
             self._publisher.publish(
                 {"type": WorkerResponseType.ERROR, "error": str(e)})

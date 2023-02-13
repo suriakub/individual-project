@@ -18,7 +18,7 @@ class MySqlConnection {
   init = async () => {
     await this._sequelize.authenticate();
     await this._sequelize.sync({ alter: true });
-    // await this._sequelize.sync({ force: true });
+    await this._sequelize.sync({ force: true });
     await this.populateDb();
   };
 

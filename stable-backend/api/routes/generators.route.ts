@@ -1,17 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import { imageToImage, textToImage } from '../controllers/generators.controller';
+import { imageToImageValidator, textToImageValidator } from '../middlewares/validators';
 
 export const imageGeneratorRouter = express.Router();
 
-const textToImageMock = async (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    msg: 'generating image...',
-    imageName: 'bird.png',
-  });
-};
+imageGeneratorRouter.route('/image-to-image').post(imageToImageValidator, imageToImage);
 
-imageGeneratorRouter.post('/image-to-image', imageToImage);
-
-imageGeneratorRouter.post('/text-to-image', textToImage);
-
-imageGeneratorRouter.post('/text-to-image-mock', textToImageMock);
+imageGeneratorRouter.route('/text-to-image').post(textToImageValidator, textToImage);
