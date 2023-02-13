@@ -16,25 +16,29 @@ export default function App(props: { children?: React.ReactNode }) {
   );
 
   useEffect(() => {
-    socket.on('image', ({ image, progress }) => {
-      setProgress(progress);
-      setImage(image);
-    });
+    if (socket !== null) {
+      socket.on('image', ({ image, progress }) => {
+        setProgress(progress);
+        setImage(image);
+      });
+    }
 
     return function cleanup() {
-      socket.off('image');
+      if (socket !== null) {
+        socket.off('image');
+      }
     };
   }, [setImage, setProgress]);
 
   return (
     <>
       <LoginModal />
-      <div className='min-h-full'>
+      <div className="min-h-full">
         <Navigation />
         {props?.children}
         <Outlet />
-        <footer className='fixed bottom-0 left-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600'>
-          <span className='text-sm text-gray-500 sm:text-center dark:text-gray-400'>
+        <footer className="fixed bottom-0 left-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2023 Jakub Suriak
           </span>
         </footer>

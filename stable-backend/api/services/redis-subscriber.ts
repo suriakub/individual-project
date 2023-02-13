@@ -14,9 +14,9 @@ class RedisSubscriber {
       try {
         // Message listeners
         if (jsonMessage.type === WorkerMessageType.IMAGE_INFO) {
-          const { filename, progress, userId } = jsonMessage as WorkerImageMessage;
+          const { filename, progress, username } = jsonMessage as WorkerImageMessage;
           const image = fs.readFileSync(`../images/${filename}`, { encoding: 'base64' });
-          socketService.io.emit('image', { image, progress });
+          socketService.io.to(username).emit('image', { image, progress });
         }
       } catch (e) {
         console.log(e);
@@ -37,7 +37,7 @@ export const redisSubscriber: RedisSubscriber = new RedisSubscriber('workerMessa
 
 interface WorkerMessage {
   type: WorkerMessageType;
-  userId: number;
+  username: string;
 }
 
 interface WorkerImageMessage extends WorkerMessage {

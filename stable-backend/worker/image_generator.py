@@ -1,7 +1,6 @@
 import torch
 from diffusers import StableDiffusionPipeline, StableDiffusionInpaintPipeline, StableDiffusionImg2ImgPipeline, AutoencoderKL, UNet2DConditionModel, LMSDiscreteScheduler, PNDMScheduler
-from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
-from transformers import CLIPTextModel, CLIPTokenizer, CLIPFeatureExtractor
+from transformers import CLIPTextModel, CLIPTokenizer
 from io import BytesIO
 from PIL import Image
 from pathlib import Path
@@ -9,8 +8,6 @@ import base64
 import uuid
 
 from publisher import WorkerResponseType, Publisher
-
-path = Path(__file__).parent.absolute().joinpath('models')
 
 MODEL = "runwayml/stable-diffusion-v1-5"
 
@@ -29,17 +26,20 @@ class ImageGenerator:
 
         vae = AutoencoderKL.from_pretrained(
             MODEL, subfolder="vae", revision="fp16", torch_dtype=torch.float16).to(device)
+        print("Autoencoder loaded.")
         text_encoder = CLIPTextModel.from_pretrained(
             MODEL, subfolder="text_encoder", revision="fp16", torch_dtype=torch.float16).to(device)
+        print("Text encoder loaded.")
         tokenizer = CLIPTokenizer.from_pretrained(
             MODEL, subfolder="tokenizer", revision="fp16", torch_dtype=torch.float16)
+        print("Tokenizer loaded.")
         unet = UNet2DConditionModel.from_pretrained(
             MODEL, subfolder="unet", revision="fp16", torch_dtype=torch.float16).to(device)
-        # scheduler = LMSDiscreteScheduler(
-        #     beta_start=0.00085, beta_end=0.012, beta_schedule="scaled_linear", num_train_timesteps=1000)
+        print("U-Net loaded.")
         scheduler = PNDMScheduler.from_pretrained(
             MODEL, subfolder="scheduler"
         )
+        print("Scheduler loaded.")
 
         self._vae = vae
 
@@ -49,9 +49,11 @@ class ImageGenerator:
 
         self._text_to_img_pipeline = StableDiffusionPipeline(
             vae, text_encoder, tokenizer, unet, scheduler, None, None, False).to(device)
+        print("Text to Image pipeline ready.")
 
         self._img_to_img_pipeline = StableDiffusionImg2ImgPipeline(
             vae, text_encoder, tokenizer, unet, scheduler, None, None, False).to(device)
+        print("Image to Image pipeline ready.")
 
     def _decode_latents(self, latents: torch.FloatTensor):
         latents = 1 / 0.18215 * latents
@@ -85,8 +87,8 @@ class ImageGenerator:
             message = {
                 "type": WorkerResponseType.IMAGE_INFO,
                 "filename": filename,
-                "userId": user_id,
                 "progress": int(step / total_steps * 100),
+                "username": user_id,
             }
             self._publisher.publish(message)
 
@@ -116,7 +118,7 @@ class ImageGenerator:
         message = {
             "type": WorkerResponseType.IMAGE_INFO,
             "filename": filename,
-            "userId": user_id,
+            "username": user_id,
             "progress": 100
         }
         self._publisher.publish(message)
@@ -149,7 +151,13 @@ class ImageGenerator:
         message = {
             "type": WorkerResponseType.IMAGE_INFO,
             "filename": filename,
-            "userId": user_id,
+            "username": user_id,
             "progress": 100
         }
         self._publisher.publish(message)
+
+
+# What we need to do on a practical level is to:
+#  - change Image-to-Image pipeline from diffusers
+#  - make it not add noise to images before generation
+#  - make it finish in a correct number of steps

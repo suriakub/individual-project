@@ -10,7 +10,7 @@ const evaluateValidations = (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const textToImageValidator = [
-  body('userId').exists().isInt(),
+  body('username').exists().isString(),
   body('args.prompt').exists().isString(),
   body('args.height').exists().isInt({ min: 128, max: 768 }),
   body('args.width').exists().isInt({ min: 128, max: 768 }),
@@ -20,7 +20,7 @@ export const textToImageValidator = [
 ];
 
 export const imageToImageValidator = [
-  body('userId').exists().isInt(),
+  body('username').exists().isString(),
   body('args.prompt').exists().isString(),
   body('args.image').exists().isString(),
   body('args.strength').exists().isFloat({ min: 0, max: 1 }),

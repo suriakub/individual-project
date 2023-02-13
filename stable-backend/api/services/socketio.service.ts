@@ -15,7 +15,11 @@ class SocketIOService {
 
     // for debugging
     this._io.on('connection', (socket: Socket) => {
-      console.log('a user connected', socket.id);
+      const username = socket.handshake.query['username'];
+      if (username) {
+        console.log('a user connected', username);
+        socket.join(username);
+      }
     });
     // for debugging
     this._io.on('disconnect', () => {

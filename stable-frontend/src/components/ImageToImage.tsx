@@ -6,19 +6,19 @@ import { useFormStore } from '../store/form.store';
 import { ImageDraw } from './ImageDraw';
 import { ReactSketchCanvasRef } from 'react-sketch-canvas';
 import ProgressBar from './ProgressBar';
-import ImageSlider from './ImageSlider';
 
 export default function ImageToImage() {
   const [prompt, setPrompt, steps, setSteps] = useFormStore(
     (state) => [state.prompt, state.setPrompt, state.steps, state.setSteps],
     shallow
   );
-  const [setProgress, setImage, progress, diffusionState] = useGlobalStore(
+  const [setProgress, setImage, progress, diffusionState, username] = useGlobalStore(
     (state) => [
       state.setProgress,
       state.setImage,
       state.progress,
       state.diffusionState,
+      state.username
     ],
     shallow
   );
@@ -34,7 +34,7 @@ export default function ImageToImage() {
     canvasRef.current?.clearCanvas();
     setProgress(0);
     apiClient.post('/generators/image-to-image', {
-      userId: 1,
+      username,
       args: {
         prompt,
         image: editedImage,

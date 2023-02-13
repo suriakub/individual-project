@@ -22,7 +22,7 @@ export enum DiffusionState {
 }
 
 export const useGlobalStore = create<GlobalStore>((set) => ({
-  progress: 0,
+  progress: -1,
   images: [DEFAULT_IMAGE],
   selectedImage: 0,
   diffusionState: DiffusionState.NOT_STARTED,

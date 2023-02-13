@@ -32,7 +32,7 @@ export enum WorkerTaskType {
 
 export interface WorkerTask<T> {
   taskType: WorkerTaskType;
-  userId: string;
+  username: string;
   args: T;
 }
 

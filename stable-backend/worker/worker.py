@@ -32,14 +32,14 @@ class Worker:
                 print("Text-to-Image | prompt: " +
                       msg['args']['prompt'])
                 self._generator.text_to_image(
-                    user_id=msg['userId'], **msg['args'])
+                    user_id=msg['username'], **msg['args'])
                 print("...finished")
 
             if (task_type == TaskType.IMAGE_TO_IMAGE):
                 print("Image-to-Image | prompt: " +
                       msg['args']['prompt'])
                 self._generator.image_to_image(
-                    user_id=msg['userId'], **msg['args'])
+                    user_id=msg['username'], **msg['args'])
                 print("...finished")
 
             if (task_type == TaskType.IMAGE_INPAINTING):
