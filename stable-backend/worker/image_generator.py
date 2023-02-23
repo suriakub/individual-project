@@ -97,6 +97,14 @@ class ImageGenerator:
     def _generate_image_name(self, prompt: str, extension: str):
         return prompt.strip().replace(" ", "-") + "-" + str(uuid.uuid4())[:6] + extension
 
+    # assumes image is encoded as base64 string
+    def _image_from_string(self, image: str):
+        image = bytes(image, 'utf-8')
+        image = image[image.find(b'/9'):]
+        image = Image.open(
+            BytesIO(base64.b64decode(image))).convert("RGB")
+        return image
+
     def text_to_image(self, user_id: int, prompt: str, height: int, width: int, steps: int, seed=torch.manual_seed(32)):
         image = self._text_to_img_pipeline(
             prompt=prompt,
@@ -125,11 +133,7 @@ class ImageGenerator:
 
     def image_to_image(self, user_id: int, image: str, prompt: str, steps: int, strength=0.75, seed=torch.manual_seed(32)):
         # image encoded as a byte64 string
-        image = bytes(image, 'utf-8')
-        image = image[image.find(b'/9'):]
-        input_image = Image.open(
-            BytesIO(base64.b64decode(image))).convert("RGB")
-        input_image = input_image.resize((512, 512))
+        input_image = self._image_from_string(image).resize((512, 512))
 
         output_image = self._img_to_img_pipeline(
             prompt=prompt,
@@ -156,6 +160,8 @@ class ImageGenerator:
         }
         self._publisher.publish(message)
 
+    def text_to_image_custom(self, user_id: int, prompt: str, height: int, width: int, steps: int, seed=torch.manual_seed(32)):
+        pass
 
 # What we need to do on a practical level is to:
 #  - change Image-to-Image pipeline from diffusers
