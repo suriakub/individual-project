@@ -25,6 +25,13 @@ export const imageToImageValidator = [
   body('args.image').exists().isString(),
   body('args.strength').exists().isFloat({ min: 0, max: 1 }),
   body('args.steps').exists().isInt({ min: 0, max: 100 }),
+  body('args.mask').optional().isString(),
   body('args.seed').optional().isNumeric(),
+  evaluateValidations,
+];
+
+export const mergeImagesValidator = [
+  body('mask').exists().isString(),
+  body('image').exists().isString(),
   evaluateValidations,
 ];

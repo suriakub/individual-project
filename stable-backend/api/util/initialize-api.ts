@@ -13,8 +13,6 @@ export const initializeApi = async (): Promise<http.Server> => {
   await redisPublisher.init();
   await redisSubscriber.init();
   console.log('Redis connections successfully established.');
-  // await mysql.init();
-  // console.log('DB connection successfully established.');
 
   const expressServer: Express = express();
 

@@ -6,11 +6,11 @@ from tqdm.auto import tqdm
 
 
 class TextToImagePipeline(DiffusionPipeline):
-    def __init__(self, vae, text_encoder, tokenizer, unet, scheduler, device):
-        super().__init__(vae, text_encoder, tokenizer, unet, scheduler, device)
+    def __init__(self, vae, text_encoder, tokenizer, unet, scheduler, device, torch_dtype):
+        super().__init__(vae, text_encoder, tokenizer, unet, scheduler, device, torch_dtype)
         print("Text to Image pipeline ready.")
 
-    def __call__(self, prompt, height, width, steps=30, callback=None, callback_steps=None, seed=None, guidance_scale=7.5):
+    def __call__(self, prompt, height, width, steps, callback, seed=None, guidance_scale=7.5):
         # Prep text
         text_embeddings = self._encode_prompt(prompt)
 
@@ -26,7 +26,7 @@ class TextToImagePipeline(DiffusionPipeline):
         latents = latents * self._scheduler.sigmas[0]
 
         # Denoising loop
-        with torch.autocast(self._device, torch.float16):
+        with torch.autocast(self._device, self._torch_dtype):
             for i, t in tqdm(enumerate(self._scheduler.timesteps)):
                 sigma = self._scheduler.sigmas[i]
 
@@ -52,9 +52,9 @@ class TextToImagePipeline(DiffusionPipeline):
                     noise_pred, t, latents).prev_sample
 
                 # call the callback
-                if callback is not None and i % callback_steps == 0:
+                if i % self._image_frequency == 0 or i == steps - 1:
                     image = latents_to_pil(latents_noiseless, self._vae)
-                    callback(i, image)
+                    callback(i + 1, image)
 
         # scale and decode the image latents with vae
         return latents_to_pil(latents, self._vae)

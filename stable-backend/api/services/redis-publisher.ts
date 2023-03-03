@@ -1,24 +1,22 @@
-import * as redis from 'redis';
-
+import { Redis } from 'ioredis';
 class RedisPublisher {
-  private _publisher: ReturnType<typeof redis.createClient>;
+  private publisher: Redis;
 
   constructor() {
-    this._publisher = redis.createClient();
+    this.publisher = new Redis(6379, { lazyConnect: true });
   }
 
   init = async () => {
-    await this._publisher.connect();
+    await this.publisher.connect();
   };
 
   publish = async (message: WorkerTask<TaskType>) => {
     const messageString = JSON.stringify(message);
-    const queueSize = await this._publisher.lPush('workerTasks', messageString);
-    console.log(`REDIS PUB: Task sent. Number of tasks in queue: ${queueSize}`);
+    await this.publisher.lpush('workerTasks', messageString);
   };
 
   get redisPublisher() {
-    return this._publisher;
+    return this.publisher;
   }
 }
 

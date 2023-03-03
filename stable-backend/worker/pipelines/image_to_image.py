@@ -7,11 +7,11 @@ from tqdm.auto import tqdm
 
 
 class ImageToImagePipeline(DiffusionPipeline):
-    def __init__(self, vae, text_encoder, tokenizer, unet, scheduler, device):
-        super().__init__(vae, text_encoder, tokenizer, unet, scheduler, device)
+    def __init__(self, vae, text_encoder, tokenizer, unet, scheduler, device, torch_dtype):
+        super().__init__(vae, text_encoder, tokenizer, unet, scheduler, device, torch_dtype)
         print("Image to Image pipeline ready.")
 
-    def __call__(self, prompt, image, strength=0.8, steps=30, callback=None, callback_steps=None, seed=None, guidance_scale=7.5):
+    def __call__(self, prompt, image, strength, steps, callback, seed=None, guidance_scale=7.5):
         # Prep text
         text_embeddings = self._encode_prompt(prompt)
 
@@ -23,12 +23,10 @@ class ImageToImagePipeline(DiffusionPipeline):
         timesteps, new_steps = self._get_timesteps(steps, strength)
         latent_timestep = timesteps[:1].repeat(1)
 
-        latents = self._prepare_latents(
-            image, latent_timestep, torch.float16
-        )
+        latents = self._prepare_latents(image, latent_timestep)
 
         # Denoising loop
-        with torch.autocast(self._device, torch.float16):
+        with torch.autocast(self._device, self._torch_dtype):
             for i, t in tqdm(enumerate(timesteps)):
                 sigma = self._scheduler.sigmas[i + steps - new_steps]
 
@@ -54,9 +52,9 @@ class ImageToImagePipeline(DiffusionPipeline):
                     noise_pred, t, latents).prev_sample
 
                 # call the callback
-                if callback is not None and i % callback_steps == 0:
+                if i % self._image_frequency == 0 or i == len(timesteps) - 1:
                     image = latents_to_pil(latents_noiseless, self._vae)
-                    callback(i, image)
+                    callback(i + 1 + steps - new_steps, image)
 
         # scale and decode the image latents with vae
         return latents_to_pil(latents, self._vae)
@@ -85,14 +83,14 @@ class ImageToImagePipeline(DiffusionPipeline):
 
         return timesteps, steps - t_start
 
-    def _prepare_latents(self, image, timestep, dtype, generator=None):
-        image = image.to(device=self._device, dtype=dtype)
+    def _prepare_latents(self, image, timestep, generator=None):
+        image = image.to(device=self._device, dtype=self._torch_dtype)
         with torch.no_grad():
             init_latents = self._vae.encode(
                 image).latent_dist.sample(generator)
         init_latents = 0.18215 * init_latents
         init_latents = torch.cat([init_latents], dim=0)
         noise = torch.randn(init_latents.shape,
-                            device=self._device, dtype=dtype).to(self._device)
+                            device=self._device, dtype=self._torch_dtype).to(self._device)
         init_latents = self._scheduler.add_noise(init_latents, noise, timestep)
         return init_latents

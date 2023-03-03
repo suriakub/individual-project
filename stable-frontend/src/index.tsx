@@ -5,7 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import GeneratorPage from './pages/GeneratorPage';
-import ImagesPage from './pages/ImagesPage';
 import ErrorPage from './pages/ErrorPage';
 
 const router = createBrowserRouter([
@@ -22,10 +21,6 @@ const router = createBrowserRouter([
       {
         path: 'generator',
         element: <GeneratorPage />
-      },
-      {
-        path: 'my-images',
-        element: <ImagesPage />
       }
     ]
   }

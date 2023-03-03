@@ -1,13 +1,21 @@
 from redis import Redis
+import torch
 import json
 import time
 from image_generator import ImageGenerator
 from publisher import Publisher, WorkerResponseType
 from enum import Enum
 import traceback
+from dotenv import load_dotenv
+import os
 
-PUBLISH_QUEUE = "workerMessages"
-LISTEN_QUEUE = "workerTasks"
+load_dotenv()
+
+PUBLISH_QUEUE = os.getenv('PUBLISH_QUEUE')
+LISTEN_QUEUE = os.getenv('LISTEN_QUEUE')
+MODEL = os.getenv('MODEL')
+MODEL_PRECISION = torch.float16 if os.getenv(
+    'USE_FLOAT16') == 'true' else torch.float32
 
 
 class TaskType(str, Enum):
@@ -18,28 +26,39 @@ class TaskType(str, Enum):
 
 class Worker:
     def __init__(self):
-        self._redis = Redis(charset="utf-8", decode_responses=True)
-        self._publisher = Publisher(self._redis, PUBLISH_QUEUE)
-        self._generator = ImageGenerator(self._publisher)
+        self._redis = Redis(
+            charset="utf-8",
+            decode_responses=True
+        )
+        self._publisher = Publisher(
+            r=self._redis,
+            channel=PUBLISH_QUEUE
+        )
+        self._generator = ImageGenerator(
+            publisher=self._publisher,
+            model=MODEL,
+            torch_dtype=MODEL_PRECISION
+        )
         self._channel = LISTEN_QUEUE
 
     def _work(self, item):
         try:
             msg = json.loads(item)
             task_type = msg['taskType']
+            username = msg['username']
 
             if (task_type == TaskType.TEXT_TO_IMAGE):
                 print("Text-to-Image | prompt: " +
                       msg['args']['prompt'])
                 self._generator.text_to_image(
-                    user_id=msg['username'], **msg['args'])
+                    username=username, **msg['args'])
                 print("...finished")
 
             if (task_type == TaskType.IMAGE_TO_IMAGE):
                 print("Image-to-Image | prompt: " +
                       msg['args']['prompt'])
                 self._generator.image_to_image(
-                    user_id=msg['username'], **msg['args'])
+                    username=username, **msg['args'])
                 print("...finished")
 
             if (task_type == TaskType.IMAGE_INPAINTING):
@@ -47,14 +66,9 @@ class Worker:
                       msg['args']['prompt'])
                 print("...finished")
 
-        except ValueError as e:
-            self._publisher.publish(
-                {"type": WorkerResponseType.ERROR, "error": str(e)})
-            print("Error decoding message: " + str(e))
-
         except Exception as e:
             self._publisher.publish(
-                {"type": WorkerResponseType.ERROR, "error": str(e)})
+                {"type": WorkerResponseType.ERROR, "error": str(e), "username": username})
             traceback.print_exc()
             print("ERROR: " + str(e))
 

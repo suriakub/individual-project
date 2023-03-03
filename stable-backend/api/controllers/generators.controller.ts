@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ImageToImage, redisPublisher, TextToImage, WorkerTask, WorkerTaskType } from '../services/redis-publisher';
+import { mergeImages } from '../util/image';
 
 export const textToImage = async (req: Request, res: Response, next: NextFunction) => {
   const task: WorkerTask<TextToImage> = {
@@ -19,6 +20,11 @@ export const textToImage = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const imageToImage = async (req: Request, res: Response, next: NextFunction) => {
+  let { image, mask } = req.body.args;
+  if (mask) {
+    req.body.args.image = await mergeImages(image, mask);
+    delete req.body.args.mask;
+  }
   const task: WorkerTask<ImageToImage> = {
     taskType: WorkerTaskType.IMAGE_TO_IMAGE,
     ...req.body,
@@ -28,7 +34,7 @@ export const imageToImage = async (req: Request, res: Response, next: NextFuncti
     await redisPublisher.publish(task);
 
     res.status(200).json({
-      msg: 'Generating image...',
+      message: 'Generating image...',
     });
   } catch (e) {
     next(e);

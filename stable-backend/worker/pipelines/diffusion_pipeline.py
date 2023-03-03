@@ -1,14 +1,22 @@
+import os
+from dotenv import load_dotenv
 import torch
+
+load_dotenv()
+
+IMAGE_FREQUENCY: int = int(os.getenv('IMAGE_FREQUENCY'))
 
 
 class DiffusionPipeline:
-    def __init__(self, vae, text_encoder, tokenizer, unet, scheduler, device) -> None:
+    def __init__(self, vae, text_encoder, tokenizer, unet, scheduler, device, torch_dtype) -> None:
         self._vae = vae
         self._text_encoder = text_encoder
         self._tokenizer = tokenizer
         self._unet = unet
         self._scheduler = scheduler
         self._device = device
+        self._torch_dtype = torch_dtype
+        self._image_frequency = IMAGE_FREQUENCY
 
     def _encode_prompt(self, prompt):
         text_input = self._tokenizer(
