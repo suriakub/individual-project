@@ -19,12 +19,19 @@ def latents_to_pil(latents, vae):
 
 
 # assumes image is encoded as base64 string
-def image_from_string(image: str):
+def pil_from_string(image: str):
     image = bytes(image, 'utf-8')
     image = image[image.find(b'/9'):]
     image = Image.open(
         BytesIO(base64.b64decode(image))).convert("RGB")
     return image
+
+
+def string_from_pil(image):
+    buffer = BytesIO()
+    image.save(buffer, format="JPEG")
+    image_str = base64.b64encode(buffer.getvalue())
+    return 'data:image/jpeg;base64,' + "".join(map(chr, image_str))
 
 
 def generate_image_name(prompt: str):

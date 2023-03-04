@@ -27,6 +27,8 @@ class TaskType(str, Enum):
 class Worker:
     def __init__(self):
         self._redis = Redis(
+            host='localhost',
+            port=6379,
             charset="utf-8",
             decode_responses=True
         )

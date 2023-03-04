@@ -1,6 +1,5 @@
 import { Redis } from 'ioredis';
 import { socketService } from './socketio.service';
-import fs from 'fs';
 
 class RedisSubscriber {
   private redisSubscriber: Redis;
@@ -24,8 +23,7 @@ class RedisSubscriber {
 
         // Message listeners
         if (jsonMessage?.type === WorkerMessageType.IMAGE_INFO) {
-          const { filename, step, totalSteps, username } = jsonMessage as WorkerImageMessage;
-          const image = fs.readFileSync(`../images/${filename}`, { encoding: 'base64' });
+          const { image, step, totalSteps, username } = jsonMessage as WorkerImageMessage;
           socketService.io.to(username).emit('image', { image, step, totalSteps });
         } else if (jsonMessage?.type === WorkerMessageType.ERROR) {
           const { error, username } = jsonMessage as WorkerErrorMessage;
@@ -50,7 +48,7 @@ interface WorkerMessage {
 }
 
 interface WorkerImageMessage extends WorkerMessage {
-  filename: string;
+  image: string;
   step: number;
   totalSteps: number;
 }

@@ -1,10 +1,9 @@
-from utils.image import generate_image_name, image_from_string
+from utils.image import pil_from_string, string_from_pil
 import torch
-from diffusers import StableDiffusionInpaintPipeline, AutoencoderKL, UNet2DConditionModel, LMSDiscreteScheduler
+from diffusers import AutoencoderKL, UNet2DConditionModel, LMSDiscreteScheduler
 from transformers import CLIPTextModel, CLIPTokenizer
 from tqdm.auto import tqdm
 from torchvision import transforms as tfms
-from pathlib import Path
 from pipelines.text_to_image import TextToImagePipeline
 from pipelines.image_to_image import ImageToImagePipeline
 
@@ -49,10 +48,6 @@ class ImageGenerator:
 
         self._vae = vae
 
-        # self._inpaint_pipeline = StableDiffusionInpaintPipeline.from_pretrained(
-        #     "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
-        # ).to(torch_device)
-
         self._text_to_img_pipeline = TextToImagePipeline(
             vae, text_encoder, tokenizer, unet, scheduler, device, torch_dtype
         )
@@ -63,13 +58,10 @@ class ImageGenerator:
 
     def _report_image_progress(self, user_id: int, prompt: str, total_steps: int):
         def fn(step: int, image):
-            filename = generate_image_name(prompt + '_' + str(step))
-            image.save(Path(__file__).parent.parent.absolute().joinpath(
-                'images').joinpath(filename))
 
             message = {
                 "type": WorkerResponseType.IMAGE_INFO,
-                "filename": filename,
+                "image": string_from_pil(image),
                 "step": step,
                 "totalSteps": total_steps,
                 "username": user_id,
@@ -88,7 +80,7 @@ class ImageGenerator:
         )
 
     def image_to_image(self, username: int, image: str, prompt: str, steps: int, strength=0.75, seed=torch.manual_seed(32)):
-        input_image = image_from_string(image).resize((512, 512))
+        input_image = pil_from_string(image).resize((512, 512))
 
         self._img_to_img_pipeline(
             prompt=prompt,
