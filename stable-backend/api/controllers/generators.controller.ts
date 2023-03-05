@@ -21,10 +21,16 @@ export const textToImage = async (req: Request, res: Response, next: NextFunctio
 
 export const imageToImage = async (req: Request, res: Response, next: NextFunction) => {
   let { image, mask } = req.body.args;
-  if (mask) {
+
+  try {
     req.body.args.image = await mergeImages(image, mask);
     delete req.body.args.mask;
+  } catch (e) {
+    res.status(400).json({
+      error: 'Please provide a valid image.'
+    })
   }
+
   const task: WorkerTask<ImageToImage> = {
     taskType: WorkerTaskType.IMAGE_TO_IMAGE,
     ...req.body,

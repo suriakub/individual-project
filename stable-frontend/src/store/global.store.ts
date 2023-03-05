@@ -62,13 +62,7 @@ export const useGlobalStore = create<GlobalStore>((set) => ({
 
   setProgress: (step: number, totalSteps: number) => {
     const progress = Math.floor((step / totalSteps) * 100);
-    let state = DiffusionState.IN_PROGRESS;
-    if (progress === 100) {
-      state = DiffusionState.COMPLETED;
-    } else if (progress === -1) {
-      state = DiffusionState.NOT_STARTED;
-    }
-    set(() => ({ progress, diffusionState: state }));
+    set(() => ({ progress }));
   },
 
   pushImage: (data: ImageData) => {

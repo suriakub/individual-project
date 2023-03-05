@@ -36,6 +36,7 @@ export default function UploadField({
         <input
           id="dropzone-file"
           type="file"
+          accept='image/*'
           className="hidden"
           onChange={onUpload}
         />

@@ -34,8 +34,9 @@ export default function TextToImage() {
 
   const handleSubmit = (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setDiffusionState(DiffusionState.IN_PROGRESS)
     resetImages();
-    setProgress(0, 1);
+    setProgress(0, steps);
     apiClient.post('/generators/text-to-image', {
       username,
       args: {

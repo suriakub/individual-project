@@ -31,6 +31,7 @@ export default function ImageToImage() {
     resetImages,
     popImage,
     setSelectedPage,
+    setDiffusionState,
     username,
     imageData,
     diffusionState
@@ -41,6 +42,7 @@ export default function ImageToImage() {
       s.resetImages,
       s.popImage,
       s.setSelectedPage,
+      s.setDiffusionState,
       s.username,
       s.imageData,
       s.diffusionState
@@ -70,24 +72,28 @@ export default function ImageToImage() {
 
   const handleSubmit = async (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setDiffusionState(DiffusionState.IN_PROGRESS);
     setGenerationStarted(true);
 
-    debugger;
     const mask = await canvasRef.current?.exportImage('jpeg');
     const uploadedImage = imageData[imageData.length - 1].image;
     canvasRef.current?.clearCanvas();
     resetImages();
-    setProgress(0, 1);
-    apiClient.post('/generators/image-to-image', {
-      username,
-      args: {
-        prompt,
-        image: uploadedImage,
-        mask,
-        steps,
-        strength
-      }
-    });
+    setProgress(0, steps);
+    try {
+      await apiClient.post('/generators/image-to-image', {
+        username,
+        args: {
+          prompt,
+          image: uploadedImage,
+          mask,
+          steps,
+          strength
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const onImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +118,7 @@ export default function ImageToImage() {
       );
     }
     return (
-      <div className='w-[432px] h-[432px]'>
+      <div className="w-[432px] h-[432px]">
         <UploadField onUpload={onImageUpload} />
       </div>
     );
@@ -124,13 +130,6 @@ export default function ImageToImage() {
         <div className="max-w-md p-1 rounded-lg border-4 border-dashed border-blue-300">
           {renderImage()}
         </div>
-        <button
-          className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 mt-3 ml-2"
-          type="submit"
-          hidden={diffusionState !== DiffusionState.COMPLETED}
-        >
-          Edit Mode
-        </button>
       </div>
       <div className="w-full md:w-1/3 md:min-w-[33%] mb-6 md:mb-0">
         <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -181,7 +180,9 @@ export default function ImageToImage() {
           <button
             className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-2 px-4 rounded-lg disabled:bg-purple-100 disabled:border disabled:border-1 disabled:border-purple-400 disabled:cursor-not-allowed disabled:text-slate-500 disabled:border-slate-200"
             type="submit"
-            disabled={!imageWasUploaded}
+            disabled={
+              !imageWasUploaded || diffusionState === DiffusionState.IN_PROGRESS
+            }
           >
             Generate
           </button>

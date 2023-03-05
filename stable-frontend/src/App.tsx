@@ -31,6 +31,11 @@ export default function App(props: { children?: React.ReactNode }) {
       socket.on('image', ({ image, step, totalSteps }) => {
         pushImage({ image, step, totalSteps });
         setProgress(step, totalSteps);
+        if (step === totalSteps) {
+          setDiffusionState(DiffusionState.COMPLETED);
+        } else {
+          setDiffusionState(DiffusionState.IN_PROGRESS);
+        }
       });
       socket.on('error', () => {
         setError(true);

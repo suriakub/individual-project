@@ -28,6 +28,7 @@ export default function SketchToImage() {
     resetImages,
     setSelectedImage,
     setSelectedPage,
+    setDiffusionState,
     username,
     imageData,
     diffusionState
@@ -37,6 +38,7 @@ export default function SketchToImage() {
       s.resetImages,
       s.setSelectedImage,
       s.setSelectedPage,
+      s.setDiffusionState,
       s.username,
       s.imageData,
       s.diffusionState
@@ -52,13 +54,12 @@ export default function SketchToImage() {
 
   const handleSubmit = async (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    debugger;
+    setDiffusionState(DiffusionState.IN_PROGRESS);
     const mask = await canvasRef.current?.exportImage('jpeg');
     const uploadedImage = imageData[imageData.length - 1].image;
     canvasRef.current?.clearCanvas();
     resetImages();
-    setProgress(0, 1);
+    setProgress(0, steps);
     apiClient.post('/generators/image-to-image', {
       username,
       args: {
@@ -128,6 +129,7 @@ export default function SketchToImage() {
           <button
             className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-2 px-4 rounded-lg disabled:bg-purple-100 disabled:border disabled:border-1 disabled:border-purple-400 disabled:cursor-not-allowed disabled:text-slate-500 disabled:border-slate-200"
             type="submit"
+            disabled={diffusionState === DiffusionState.IN_PROGRESS}
           >
             Generate
           </button>

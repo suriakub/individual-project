@@ -1,7 +1,7 @@
 import React, { MouseEvent, useEffect } from 'react';
 import apiClient from '../util/api-client';
 import { shallow } from 'zustand/shallow';
-import { useGlobalStore } from '../store/global.store';
+import { DiffusionState, useGlobalStore } from '../store/global.store';
 import { useTextToImageStore as useFormStore } from '../store/text-to-image.store';
 import { DrawingMenu } from '../components/DrawingMenu';
 import { roundNumber } from '../util/number-utils';
@@ -20,6 +20,8 @@ export default function EditImage() {
     setProgress,
     pushImage,
     sliceImages,
+    setDiffusionState,
+    diffusionState,
     username,
     imageData,
     selectedImage
@@ -28,6 +30,8 @@ export default function EditImage() {
       s.setProgress,
       s.pushImage,
       s.sliceImages,
+      s.setDiffusionState,
+      s.diffusionState,
       s.username,
       s.imageData,
       s.selectedImage
@@ -43,6 +47,7 @@ export default function EditImage() {
 
   const handleSubmit = async (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setDiffusionState(DiffusionState.IN_PROGRESS);
     const mask = await canvasRef.current?.exportImage('jpeg');
     canvasRef.current?.clearCanvas();
     const { step, totalSteps } = imageData[selectedImage];
@@ -57,7 +62,7 @@ export default function EditImage() {
       step,
       totalSteps
     });
-    setProgress(0, 1);
+    setProgress(0, steps);
     apiClient.post('/generators/image-to-image', {
       username,
       args: {
@@ -119,7 +124,9 @@ export default function EditImage() {
           <button
             className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-2 px-4 rounded-lg disabled:bg-purple-100 disabled:border disabled:border-1 disabled:border-purple-400 disabled:cursor-not-allowed disabled:text-slate-500 disabled:border-slate-200"
             type="submit"
-            disabled={strength === 0}
+            disabled={
+              strength === 0 || diffusionState === DiffusionState.IN_PROGRESS
+            }
           >
             Continue Generation
           </button>
