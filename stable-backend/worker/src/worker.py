@@ -11,6 +11,7 @@ import os
 
 load_dotenv()
 
+REDIS_HOST = os.getenv('REDIS_HOST')
 PUBLISH_QUEUE = os.getenv('PUBLISH_QUEUE')
 LISTEN_QUEUE = os.getenv('LISTEN_QUEUE')
 MODEL = os.getenv('MODEL')
@@ -27,7 +28,7 @@ class TaskType(str, Enum):
 class Worker:
     def __init__(self):
         self._redis = Redis(
-            host='localhost',
+            host=REDIS_HOST,
             port=6379,
             charset="utf-8",
             decode_responses=True
@@ -84,4 +85,5 @@ class Worker:
 
 
 if __name__ == '__main__':
+    os.umask(0o002)
     Worker().run()

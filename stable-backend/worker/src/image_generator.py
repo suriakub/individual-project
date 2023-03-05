@@ -12,6 +12,8 @@ from publisher import WorkerResponseType, Publisher
 class ImageGenerator:
 
     def __init__(self, publisher: Publisher, model: str, torch_dtype):
+        revision = "fp16" if torch_dtype == torch.float16 else "main" # see available revisions at https://huggingface.co/runwayml/stable-diffusion-v1-5/tree/main
+
         self._publisher = publisher
 
         if torch.has_mps:
@@ -26,19 +28,19 @@ class ImageGenerator:
         print("Loading models...")
 
         vae = AutoencoderKL.from_pretrained(
-            model, subfolder="vae", revision="fp16", torch_dtype=torch_dtype).to(device)
+            model, subfolder="vae", revision=revision, torch_dtype=torch_dtype).to(device)
         print("Autoencoder loaded.")
 
         text_encoder = CLIPTextModel.from_pretrained(
-            model, subfolder="text_encoder", revision="fp16", torch_dtype=torch_dtype).to(device)
+            model, subfolder="text_encoder", revision=revision, torch_dtype=torch_dtype).to(device)
         print("Text encoder loaded.")
 
         tokenizer = CLIPTokenizer.from_pretrained(
-            model, subfolder="tokenizer", revision="fp16", torch_dtype=torch_dtype)
+            model, subfolder="tokenizer", revision=revision, torch_dtype=torch_dtype)
         print("Tokenizer loaded.")
 
         unet = UNet2DConditionModel.from_pretrained(
-            model, subfolder="unet", revision="fp16", torch_dtype=torch_dtype).to(device)
+            model, subfolder="unet", revision=revision, torch_dtype=torch_dtype).to(device)
         print("U-Net loaded.")
 
         scheduler = LMSDiscreteScheduler.from_pretrained(

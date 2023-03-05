@@ -1,23 +1,27 @@
+import dotenv from 'dotenv';
 import { Redis } from 'ioredis';
 import { socketService } from './socketio.service';
 
 class RedisSubscriber {
-  private redisSubscriber: Redis;
-  private channel;
+  private subscriber: Redis;
+  private channel: string;
 
-  constructor(channel: string) {
-    this.channel = channel;
-    this.redisSubscriber = new Redis(6379, { lazyConnect: true });
+  constructor() {
+    dotenv.config();
+    if (!process.env.LISTEN_QUEUE) throw new Error('LISTEN_QUEUE environment variable is not defined.');
+    if (!process.env.REDIS_HOST) throw new Error('REDIS_HOST environment variable is not defined.');
+    this.channel = process.env.LISTEN_QUEUE;
+    this.subscriber = new Redis(6379, process.env.REDIS_HOST, { lazyConnect: true });
   }
 
   init = async () => {
-    await this.redisSubscriber.connect();
-    await this.redisSubscriber.subscribe(this.channel, (err) => {
+    await this.subscriber.connect();
+    await this.subscriber.subscribe(this.channel, (err) => {
       if (err) {
         console.error(`Failed to subscribe: ${err.message}`);
       }
     });
-    this.redisSubscriber.on('message', (_, message) => {
+    this.subscriber.on('message', (_, message) => {
       try {
         const jsonMessage: WorkerMessage | undefined = JSON.parse(message);
 
@@ -34,13 +38,9 @@ class RedisSubscriber {
       }
     });
   };
-
-  get redisPublisher() {
-    return this.redisSubscriber;
-  }
 }
 
-export const redisSubscriber: RedisSubscriber = new RedisSubscriber('workerMessages');
+export const redisSubscriber: RedisSubscriber = new RedisSubscriber();
 
 interface WorkerMessage {
   type: WorkerMessageType;
