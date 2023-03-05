@@ -27,6 +27,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:prod": "cp .env .env-temp && cp .env.production .env && react-scripts build && cp .env-temp .env && rm .env-temp",
+    "docker:build": "docker build -t chooboo/stable-frontend .",
+    "docker:push": "docker push chooboo/stable-frontend:latest",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

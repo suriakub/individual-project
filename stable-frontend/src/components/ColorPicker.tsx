@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import reactCSS from 'reactcss';
-import { SketchPicker, ColorResult} from 'react-color';
+import { ChromePicker, ColorResult} from 'react-color';
 
 export default function ColorPicker (props: {color: string, setColor: (color: string) => void}) {
   const [display, setDisplay] = useState(false);
@@ -35,7 +35,7 @@ export default function ColorPicker (props: {color: string, setColor: (color: st
         },
         popover: {
           position: 'absolute',
-          zIndex: '2',
+          zIndex: '30',
         },
         cover: {
           top: '0px',
@@ -54,7 +54,7 @@ export default function ColorPicker (props: {color: string, setColor: (color: st
         {display ? (
           <div style={{...styles.popover, position: 'absolute'}}>
             <div style={{...styles.cover, position: 'fixed' }} onClick={handleClose} />
-            <SketchPicker
+            <ChromePicker
               color={props.color}
               onChange={handleChange}
             />
