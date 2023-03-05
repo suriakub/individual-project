@@ -2,7 +2,7 @@ import React, { MouseEvent, useEffect } from 'react';
 import apiClient from '../util/api-client';
 import { shallow } from 'zustand/shallow';
 import { DiffusionState, Page, useGlobalStore } from '../store/global.store';
-import { useTextToImageStore } from '../store/text-to-image.store';
+import { useFormStore } from '../store/form.store';
 import { DrawingMenu } from '../components/DrawingMenu';
 import { roundNumber } from '../util/number-utils';
 import Divider from '../components/Divider';
@@ -12,7 +12,7 @@ import DrawingCanvas from '../components/DrawingCanvas';
 
 export default function SketchToImage() {
   const [prompt, setPrompt, steps, setSteps, strength, setStrength] =
-    useTextToImageStore(
+    useFormStore(
       (s) => [
         s.prompt,
         s.setPrompt,

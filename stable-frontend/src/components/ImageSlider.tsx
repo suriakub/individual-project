@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'zustand/shallow';
-import { useTextToImageStore } from '../store/text-to-image.store';
+import { useFormStore } from '../store/form.store';
 import { useGlobalStore } from '../store/global.store';
 
 export default function ImageSlider() {
-  const setStrength = useTextToImageStore((state) => state.setStrength);
+  const setStrength = useFormStore((state) => state.setStrength);
   const [setProgress, setSelectedImage, imageData, selectedImage] =
     useGlobalStore(
       (state) => [

@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react';
 import apiClient from '../util/api-client';
 import { shallow } from 'zustand/shallow';
 import { useGlobalStore } from '../store/global.store';
-import { useTextToImageStore } from '../store/text-to-image.store';
+import { useFormStore } from '../store/form.store';
 import { DrawingMenu } from '../components/DrawingMenu';
 import { roundNumber } from '../util/number-utils';
 import Divider from '../components/Divider';
@@ -11,7 +11,7 @@ import { useDrawingStore } from '../store/drawing.store';
 
 export default function ImageInpainting() {
   const [prompt, setPrompt, steps, setSteps, strength, setStrength] =
-    useTextToImageStore(
+    useFormStore(
       (state) => [
         state.prompt,
         state.setPrompt,

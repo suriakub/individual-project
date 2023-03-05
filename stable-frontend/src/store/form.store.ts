@@ -9,9 +9,9 @@ interface FormStore {
   setStrength: (strength: number) => void;
 }
 
-export const useTextToImageFormStore = create<FormStore>((set) => ({
+export const useFormStore = create<FormStore>((set) => ({
   prompt: '',
-  steps: 30,
+  steps: 50,
   strength: 0,
   setPrompt: (prompt: string) => set(() => ({ prompt })),
   setSteps: (steps: number) => set(() => ({ steps })),

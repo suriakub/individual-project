@@ -2,7 +2,7 @@ import React, { MouseEvent, useEffect, useState } from 'react';
 import apiClient from '../util/api-client';
 import { shallow } from 'zustand/shallow';
 import { DiffusionState, Page, useGlobalStore } from '../store/global.store';
-import { useTextToImageStore } from '../store/text-to-image.store';
+import { useFormStore } from '../store/form.store';
 import { roundNumber } from '../util/number-utils';
 import { getBase64 } from '../util/image-utils';
 import Divider from '../components/Divider';
@@ -14,7 +14,7 @@ import UploadField from '../components/UploadField';
 
 export default function ImageToImage() {
   const [prompt, setPrompt, steps, setSteps, strength, setStrength] =
-    useTextToImageStore(
+    useFormStore(
       (s) => [
         s.prompt,
         s.setPrompt,

@@ -2,7 +2,7 @@ import React, { MouseEvent, useEffect } from 'react';
 import apiClient from '../util/api-client';
 import { shallow } from 'zustand/shallow';
 import { DiffusionState, useGlobalStore } from '../store/global.store';
-import { useTextToImageStore as useFormStore } from '../store/text-to-image.store';
+import { useFormStore } from '../store/form.store';
 import { DrawingMenu } from '../components/DrawingMenu';
 import { roundNumber } from '../util/number-utils';
 import Divider from '../components/Divider';
@@ -21,6 +21,7 @@ export default function EditImage() {
     pushImage,
     sliceImages,
     setDiffusionState,
+    setSelectedImage,
     diffusionState,
     username,
     imageData,
@@ -31,6 +32,7 @@ export default function EditImage() {
       s.pushImage,
       s.sliceImages,
       s.setDiffusionState,
+      s.setSelectedImage,
       s.diffusionState,
       s.username,
       s.imageData,
@@ -41,9 +43,12 @@ export default function EditImage() {
   const canvasRef = useDrawingStore((s) => s.canvasRef);
 
   useEffect(() => {
+    if (selectedImage === 0) {
+      setSelectedImage(imageData.length - 1);
+    }
     const { step, totalSteps } = imageData[selectedImage];
     setStrength(1 - step / totalSteps || 0);
-  }, [imageData, selectedImage, setStrength]);
+  }, [imageData, selectedImage, setSelectedImage, setStrength]);
 
   const handleSubmit = async (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();

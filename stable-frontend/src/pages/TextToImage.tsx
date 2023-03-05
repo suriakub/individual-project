@@ -2,12 +2,12 @@ import { MouseEvent, useEffect } from 'react';
 import apiClient from '../util/api-client';
 import { shallow } from 'zustand/shallow';
 import { DiffusionState, Page, useGlobalStore } from '../store/global.store';
-import { useTextToImageStore } from '../store/text-to-image.store';
+import { useFormStore } from '../store/form.store';
 import Divider from '../components/Divider';
 import ErrorBox from '../components/ErrorBox';
 
 export default function TextToImage() {
-  const [prompt, setPrompt, steps, setSteps] = useTextToImageStore(
+  const [prompt, setPrompt, steps, setSteps] = useFormStore(
     (state) => [state.prompt, state.setPrompt, state.steps, state.setSteps],
     shallow
   );
