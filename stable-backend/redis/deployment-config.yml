@@ -1,0 +1,33 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: redis
+  namespace: 2482569sproject
+spec:
+  replicas: 1
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      labels:
+        app: redis
+        deploymentconfig: redis
+    spec:
+      containers:
+        - name: frontend
+          image: redis:6.2-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: '100m'
+              memory: '512Mi'
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /data
+              name: nfs-access
+      volumes:
+      - name: nfs-access
+        persistentVolumeClaim:
+          claimName: 2482569svol1claim
+

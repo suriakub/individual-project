@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  redis-service:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-persist:/data
+
+  api-service:
+    image: chooboo/stable-backend-api:latest
+    depends_on:
+      - redis-service
+    ports:
+      - "8082:8082"
+    expose:
+      - "8082"
+    environment:
+      - REDIS_HOST=redis-service
+      - PUBLISH_QUEUE=workerTasks
+      - LISTEN_QUEUE=workerMessages
+      - PORT=8082
+
+  worker:
+    image: chooboo/stable-backend-worker:latest
+    depends_on:
+      - redis-service
+    environment:
+      - REDIS_HOST=redis-service
+      - PUBLISH_QUEUE=workerMessages
+      - LISTEN_QUEUE=workerTasks
+      - MODEL=runwayml/stable-diffusion-v1-5
+      - USE_FLOAT16=true
+      - IMAGE_FREQUENCY=2
+      - HF_HOME=/nfs/cache
+    volumes:
+      - worker-cache:/nfs/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+
+  frontend:
+    image: chooboo/stable-frontend:local
+    depends_on:
+      - api-service
+      - worker
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+
+volumes:
+  redis-persist:
+  worker-cache:

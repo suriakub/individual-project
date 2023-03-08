@@ -12,7 +12,20 @@
 - [CUDA 11.8](https://developer.nvidia.com/cuda-downloads)
 - Docker
 
-## How to run the setup locally
+## How to run the setup locally (Docker)
+
+You can run the application's top-level docker-compose file
+
+Please ensure you have port `8080` free on localhost
+
+Then you can run when in the project's top-level directory (`/individual-project`)
+
+`docker compose up -d`
+
+When running for the first time, you need to wait a while until the worker downloads
+the required models.
+
+## How to run the setup locally (for development)
 
 The application consists of three separate repositories that need to be started manually.
 

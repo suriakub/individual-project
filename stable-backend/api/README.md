@@ -2,7 +2,8 @@
 
 #### Prerequisites
 - Node.js v18
-- Redis running locally on port 6379
+- Redis running locally on port 6379 - you can run `docker-compose up -d` when in the 
+`/stable-backend` directory.
 
 ## How to run locally
 

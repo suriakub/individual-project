@@ -1,0 +1,33 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: api
+  namespace: 2482569sproject
+spec:
+  replicas: 1
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      labels:
+        app: api
+        deploymentconfig: api
+    spec:
+      containers:
+        - name: api
+          image: chooboo/stable-backend-api:latest
+          ports:
+            - containerPort: 8082
+          resources:
+            limits:
+              cpu: '1000m'
+              memory: '2048Mi'
+          env:
+            - name: REDIS_HOST
+              value: 'redis-service'
+            - name: PUBLISH_QUEUE
+              value: 'workerTasks'
+            - name: LISTEN_QUEUE
+              value: 'workerMessages'
+            - name: PORT
+              value: 8082

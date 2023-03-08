@@ -1,0 +1,52 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: worker
+  namespace: 2482569sproject
+spec:
+  replicas: 1
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      labels:
+        app: worker
+        deploymentconfig: worker
+    spec:
+      containers:
+        - name: worker
+          image: chooboo/stable-backend-worker:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: '2000m'
+              memory: '32Gi'
+              nvidia.com/gpu: 1
+            limits:
+              cpu: '4000m'
+              memory: '48Gi'
+              nvidia.com/gpu: 1
+          env:
+            - name: REDIS_HOST
+              value: 'redis-service'
+            - name: PUBLISH_QUEUE
+              value: 'workerMessages'
+            - name: LISTEN_QUEUE
+              value: 'workerTasks'
+            - name: MODEL
+              value: 'runwayml/stable-diffusion-v1-5'
+            - name: USE_FLOAT16
+              value: 'false'
+            - name: IMAGE_FREQUENCY
+              value: '2'
+            - name: HF_HOME
+              value: '/nfs'
+          volumeMounts:
+            - mountPath: /nfs/
+              name: nfs-access
+      volumes:
+        - name: nfs-access
+          persistentVolumeClaim:
+            claimName: 2482569svol1claim
+      nodeSelector:
+        node-role.ida/gpu3090: 'true'

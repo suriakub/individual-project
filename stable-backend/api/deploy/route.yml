@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api-route
+  namespace: 2482569sproject
+spec:
+  host: api.stable-diffusion.ida.dcs.gla.ac.uk
+  path: /
+  to:
+    kind: Service
+    name: api-service
+  port:
+    targetPort: 8082

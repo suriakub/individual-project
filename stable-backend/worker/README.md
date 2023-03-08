@@ -6,9 +6,10 @@
 
 #### Prerequisites
 
-- Python 3.8
-- Redis running locally on port 6379
 - [CUDA 11.8](https://developer.nvidia.com/cuda-downloads)
+- Python 3.8
+- Redis running locally on port 6379 - you can run `docker-compose up -d` when in the 
+`/stable-backend` directory.
 
 ## How to run locally
 
