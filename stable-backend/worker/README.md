@@ -9,7 +9,7 @@
 - [CUDA 11.8](https://developer.nvidia.com/cuda-downloads)
 - Python 3.8
 - Redis running locally on port 6379 - you can run `docker-compose up -d` when in the 
-`/stable-backend` directory.
+`stable-backend/` directory.
 
 ## How to run locally
 
@@ -19,6 +19,17 @@
 4. Install packages: `pip install -r requirements.txt`
 2. Create the `.env` file: `cp .env-example .env`
 5. Run the worker: `python src/worker.py`
+
+## Configuration
+
+The worker supports several environment variables that can change its behaviour.
+
+- `MODEL` - a HuggingFace Hub model to be used to instantiate the diffusion pipelines.
+
+- `USE_FLOAT16` - set this to `false` if you get errors about CUDA out of memory. It controls the floating point precision of the model.
+It will use less GPU memory at the cost of image quality.
+
+- `IMAGE_FREQUENCY` - controls the frequency at which images are sent throughout the generation process.
 
 ## How to build the Docker image
 

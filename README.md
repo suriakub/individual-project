@@ -12,20 +12,22 @@
 - [CUDA 11.8](https://developer.nvidia.com/cuda-downloads)
 - Docker
 
-## How to run the setup locally (Docker)
+## How to run the setup locally (Docker Compose)
 
-You can run the application's top-level docker-compose file
+If you use a computer with an NVidia GPU, you can run the application locally using Docker compose.
 
-Please ensure you have port `8080` free on localhost
-
-Then you can run when in the project's top-level directory (`/individual-project`)
+To do this, navigate into the project's top-level directory (`/individual-project`) and run: 
 
 `docker compose up -d`
 
-When running for the first time, you need to wait a while until the worker downloads
-the required models.
+Please ensure you have port `8080` free on localhost
+
+When running for the first time, you need to wait some time for Docker to pull all the neede images and for the worker to download Stable Diffusion model weights from HuggingFace Hub.
 
 ## How to run the setup locally (for development)
+
+If you want to contribute to the project, or just want to run the app on an M1 Macbook, you need to start
+each component of the system separately.
 
 The application consists of three separate repositories that need to be started manually.
 

@@ -9,7 +9,7 @@
 2. Create the `.env` file: `cp .env-example .env`
 3. Start the app: `npm start`
 
-The app will be accessible at [http://localhost:3002](http://localhost:3002)
+The app will be accessible at [http://localhost:3002](http://localhost:3002) by default.
 
 ## How to build the Docker image
 
