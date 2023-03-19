@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react';
 import { useDrawingStore } from '../store/drawing.store';
 import ColorPicker from './ColorPicker';
 
@@ -20,7 +21,8 @@ export const DrawingMenu = () => {
     state.setEraseMode
   ]);
 
-  const handleEraseToggle = () => {
+  const handleEraseToggle = (event: MouseEvent<HTMLInputElement>) => {
+    event.preventDefault()
     // setting the state is an async operation
     setEraseMode(!eraseMode);
     canvasRef.current?.eraseMode(!eraseMode);
@@ -28,7 +30,7 @@ export const DrawingMenu = () => {
 
   return (
     <>
-      <div className='pt-2'>
+      <div className="pt-2">
         <ColorPicker color={brushColor} setColor={setBrushColor} />
         Brush Size
         <input
@@ -43,19 +45,28 @@ export const DrawingMenu = () => {
         <div className="flex py-4">
           <button
             className="bg-red-500 hover:bg-red-400 text-white mx-1 py-1 px-2 mt-3 rounded"
-            onClick={() => canvasRef.current?.clearCanvas()}
+            onClick={(event: MouseEvent<HTMLButtonElement>) => {
+              event.preventDefault();
+              canvasRef.current?.clearCanvas();
+            }}
           >
             Clear Canvas
           </button>
           <button
             className="bg-blue-500 hover:bg-blue-400 text-white mx-1 py-1 px-2 mt-3 rounded"
-            onClick={() => canvasRef.current?.undo()}
+            onClick={(event: MouseEvent<HTMLButtonElement>) => {
+              event.preventDefault();
+              canvasRef.current?.undo();
+            }}
           >
             Undo
           </button>
           <button
             className="bg-blue-500 hover:bg-blue-400 text-white mx-1 py-1 px-2 mt-3 rounded"
-            onClick={() => canvasRef.current?.redo()}
+            onClick={(event: MouseEvent<HTMLButtonElement>) => {
+              event.preventDefault();
+              canvasRef.current?.redo();
+            }}
           >
             Redo
           </button>
@@ -76,17 +87,3 @@ export const DrawingMenu = () => {
   );
 };
 
-// Move the discussion of diffusion models into the background
-// Discuss the implications of changing worker/api/frontend, what needs to be done to develop different versions of them
-// Discuss the differences between running of the code locally vs in a cluster
-
-// Personal preference of technologies:
-// Try to avoid using random links from the internet as references
-// - look for research papers / textbooks
-// StackOverflow developer survery is a good reference for a start, but I need to back up 
-// Limited time budget is a good argument for the choice of technology
-
-// referencing should be everywhere, even when I reference a particular source frequently
-// reference Marco as an expert on diffusion
-
-// TRY TO STRUCTURE THE DISSERTATION IN A WAY THAT IF SOMEONE INTERESTED WOULD BE ABLE TO CHANGE IT EASILY

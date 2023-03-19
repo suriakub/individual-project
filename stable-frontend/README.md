@@ -13,7 +13,7 @@ The app will be accessible at [http://localhost:3002](http://localhost:3002) by 
 
 ## How to build the Docker image
 
-First, build the app: `npm run build`
+First, build the app: `npm run build:prod`
 
 To build the docker image run: `docker build -t chooboo/stable-frontend .`
 
