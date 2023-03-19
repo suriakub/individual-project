@@ -7,8 +7,15 @@ import Divider from '../components/Divider';
 import ErrorBox from '../components/ErrorBox';
 
 export default function TextToImage() {
-  const [prompt, setPrompt, steps, setSteps] = useFormStore(
-    (state) => [state.prompt, state.setPrompt, state.steps, state.setSteps],
+  const [prompt, setPrompt, steps, setSteps, seed, setSeed] = useFormStore(
+    (state) => [
+      state.prompt,
+      state.setPrompt,
+      state.steps,
+      state.setSteps,
+      state.seed,
+      state.setSeed
+    ],
     shallow
   );
 
@@ -34,7 +41,7 @@ export default function TextToImage() {
 
   const handleSubmit = (event: MouseEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setDiffusionState(DiffusionState.IN_PROGRESS)
+    setDiffusionState(DiffusionState.IN_PROGRESS);
     resetImages();
     setProgress(0, steps);
     apiClient.post('/generators/text-to-image', {
@@ -43,7 +50,8 @@ export default function TextToImage() {
         prompt,
         steps,
         height: 512,
-        width: 512
+        width: 512,
+        seed
       }
     });
   };
@@ -95,11 +103,24 @@ export default function TextToImage() {
             id="generator-steps"
             type="number"
             value={steps}
+            step="1"
             onChange={(e) => setSteps(+e.target.value)}
           />
           <label
-            className="invisible block uppercase tracking-wide text-gray-700 text-xs font-bold mb-3"
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            htmlFor="generator-seed"
           >
+            Seed
+          </label>
+          <input
+            className="appearance-none block w-[30%] text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+            id="generator-seed"
+            type="number"
+            value={seed}
+            step="1"
+            onChange={(e) => setSeed(+e.target.value)}
+          />
+          <label className="invisible block uppercase tracking-wide text-gray-700 text-xs font-bold mb-3">
             Steps
           </label>
           <input

@@ -24,7 +24,7 @@ class ImageGenerator:
             print("CUDA compatible GPU found.")
         else:
             raise RuntimeError("No GPU available")
-
+        
         print("Loading models...")
 
         vae = AutoencoderKL.from_pretrained(
@@ -72,16 +72,17 @@ class ImageGenerator:
 
         return fn
 
-    def text_to_image(self, username: int, prompt: str, height: int, width: int, steps: int, seed=torch.manual_seed(32)):
+    def text_to_image(self, username: int, prompt: str, height: int, width: int, steps: int, seed=None):
         self._text_to_img_pipeline(
             prompt=prompt,
             height=height,
             width=width,
             steps=steps,
             callback=self._report_image_progress(username, prompt, steps),
+            seed=seed
         )
 
-    def image_to_image(self, username: int, image: str, prompt: str, steps: int, strength=0.75, seed=torch.manual_seed(32)):
+    def image_to_image(self, username: int, image: str, prompt: str, steps: int, strength=0.75, seed=None):
         input_image = pil_from_string(image).resize((512, 512))
 
         self._img_to_img_pipeline(
@@ -90,4 +91,5 @@ class ImageGenerator:
             strength=strength,
             steps=steps,
             callback=self._report_image_progress(username, prompt, steps),
+            seed=seed
         )

@@ -12,6 +12,8 @@ class ImageToImagePipeline(DiffusionPipeline):
         print("Image to Image pipeline ready.")
 
     def __call__(self, prompt, image, strength, steps, callback, seed=None, guidance_scale=7.5):
+        seed = torch.cuda.manual_seed(seed) if seed is not None else seed
+
         # Prep text
         text_embeddings = self._encode_prompt(prompt)
 
@@ -23,7 +25,7 @@ class ImageToImagePipeline(DiffusionPipeline):
         timesteps, new_steps = self._get_timesteps(steps, strength)
         latent_timestep = timesteps[:1].repeat(1)
 
-        latents = self._prepare_latents(image, latent_timestep)
+        latents = self._prepare_latents(image, latent_timestep, seed)
 
         # Denoising loop
         with torch.autocast(self._device, self._torch_dtype):
@@ -47,7 +49,7 @@ class ImageToImagePipeline(DiffusionPipeline):
 
                 latents_noiseless = latents - sigma * noise_pred
 
-                # compute the previous noisy sample x_t -> x_t-1
+                # compute the previous noisy sample
                 latents = self._scheduler.step(
                     noise_pred, t, latents).prev_sample
 
@@ -83,14 +85,15 @@ class ImageToImagePipeline(DiffusionPipeline):
 
         return timesteps, steps - t_start
 
-    def _prepare_latents(self, image, timestep, generator=None):
+    def _prepare_latents(self, image, timestep, seed):
+
         image = image.to(device=self._device, dtype=self._torch_dtype)
         with torch.no_grad():
             init_latents = self._vae.encode(
-                image).latent_dist.sample(generator)
+                image).latent_dist.sample(seed)
         init_latents = 0.18215 * init_latents
         init_latents = torch.cat([init_latents], dim=0)
         noise = torch.randn(init_latents.shape,
-                            device=self._device, dtype=self._torch_dtype).to(self._device)
+                            device=self._device, dtype=self._torch_dtype, generator=seed).to(self._device)
         init_latents = self._scheduler.add_noise(init_latents, noise, timestep)
         return init_latents

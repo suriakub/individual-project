@@ -11,6 +11,7 @@ class TextToImagePipeline(DiffusionPipeline):
         print("Text to Image pipeline ready.")
 
     def __call__(self, prompt, height, width, steps, callback, seed=None, guidance_scale=7.5):
+        seed = torch.manual_seed(seed) if seed is not None else seed
         # Prep text
         text_embeddings = self._encode_prompt(prompt)
 
@@ -47,7 +48,7 @@ class TextToImagePipeline(DiffusionPipeline):
 
                 latents_noiseless = latents - sigma * noise_pred
 
-                # compute the previous noisy sample x_t -> x_t-1
+                # compute the previous noisy sample
                 latents = self._scheduler.step(
                     noise_pred, t, latents).prev_sample
 

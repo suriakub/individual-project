@@ -11,18 +11,28 @@ import { useDrawingStore } from '../store/drawing.store';
 import DrawingCanvas from '../components/DrawingCanvas';
 
 export default function SketchToImage() {
-  const [prompt, setPrompt, steps, setSteps, strength, setStrength] =
-    useFormStore(
-      (s) => [
-        s.prompt,
-        s.setPrompt,
-        s.steps,
-        s.setSteps,
-        s.strength,
-        s.setStrength
-      ],
-      shallow
-    );
+  const [
+    prompt,
+    setPrompt,
+    steps,
+    setSteps,
+    strength,
+    setStrength,
+    seed,
+    setSeed
+  ] = useFormStore(
+    (s) => [
+      s.prompt,
+      s.setPrompt,
+      s.steps,
+      s.setSteps,
+      s.strength,
+      s.setStrength,
+      s.seed,
+      s.setSeed
+    ],
+    shallow
+  );
   const [
     setProgress,
     resetImages,
@@ -67,7 +77,8 @@ export default function SketchToImage() {
         image: uploadedImage,
         mask,
         steps,
-        strength
+        strength,
+        seed
       }
     });
   };
@@ -124,6 +135,20 @@ export default function SketchToImage() {
             max="1"
             value={roundNumber(strength, 2)}
             onChange={(e) => setStrength(+e.target.value)}
+          />
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            htmlFor="generator-seed"
+          >
+            Seed
+          </label>
+          <input
+            className="appearance-none block w-[30%] text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+            id="generator-seed"
+            type="number"
+            value={seed}
+            step="1"
+            onChange={(e) => setSeed(+e.target.value)}
           />
           <Divider />
           <button
