@@ -12,19 +12,10 @@ import { useDrawingStore } from '../store/drawing.store';
 import DrawingCanvas from '../components/DrawingCanvas';
 
 export default function EditImage() {
-  const [prompt, setPrompt, steps, strength, setStrength, seed, setSeed] =
-    useFormStore(
-      (s) => [
-        s.prompt,
-        s.setPrompt,
-        s.steps,
-        s.strength,
-        s.setStrength,
-        s.seed,
-        s.setSeed
-      ],
-      shallow
-    );
+  const [prompt, setPrompt, steps, strength, setStrength] = useFormStore(
+    (s) => [s.prompt, s.setPrompt, s.steps, s.strength, s.setStrength],
+    shallow
+  );
   const [
     setProgress,
     pushImage,
