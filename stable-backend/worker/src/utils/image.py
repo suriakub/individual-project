@@ -32,7 +32,3 @@ def string_from_pil(image):
     image.save(buffer, format="JPEG")
     image_str = base64.b64encode(buffer.getvalue())
     return 'data:image/jpeg;base64,' + "".join(map(chr, image_str))
-
-
-def generate_image_name(prompt: str):
-    return prompt.strip().replace(" ", "-") + "-" + str(uuid.uuid4())[:6] + '.jpg'

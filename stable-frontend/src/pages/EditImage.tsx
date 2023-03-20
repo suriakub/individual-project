@@ -61,6 +61,7 @@ export default function EditImage() {
       image: imageData[selectedImage].image,
       mask
     });
+
     sliceImages(step);
     pushImage({
       image: data.image,
@@ -99,7 +100,6 @@ export default function EditImage() {
             className="appearance-none block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             id="generator-prompt"
             type="text"
-            placeholder="e.g. Mount Fuji with rising sun"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />

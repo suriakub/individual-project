@@ -12,7 +12,7 @@ interface FormStore {
 }
 
 export const useFormStore = create<FormStore>((set) => ({
-  prompt: '',
+  prompt: 'A dream of Mount Fuji, concept art, matte painting, HQ, 4k',
   steps: 50,
   strength: 0,
   seed: undefined,

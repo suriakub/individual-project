@@ -38,7 +38,6 @@ export type ImageData = {
 };
 
 const DEFAULT_IMAGE: ImageData = {
-  // image: `${process.env.PUBLIC_URL}/blank.jpg`,
   image: BLANK_IMAGE,
   step: 0,
   totalSteps: 0

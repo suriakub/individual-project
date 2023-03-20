@@ -60,7 +60,6 @@ class Worker:
             if (task_type == TaskType.IMAGE_TO_IMAGE):
                 print("Image-to-Image | prompt: " +
                       msg['args']['prompt'])
-                print(msg['args'])
                 self._generator.image_to_image(
                     username=username, **msg['args'])
                 print("...finished")
