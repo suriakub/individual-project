@@ -1,5 +1,7 @@
 # Stable Diffusion powered image generation application
 
+GitHub: https://github.com/suriakub/individual-project
+
 #### System requirements
 
 - RAM: 16GB
