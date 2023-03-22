@@ -2,7 +2,7 @@
 
 #### System requirements
 - RAM: 16GB
-- GPU: 8GB VRAM
+- GPU: NVidia or M1 with 8GB VRAM
 
 #### Prerequisites
 
@@ -11,7 +11,7 @@
 - Redis running locally on port 6379 - you can run `docker-compose up -d` when in the 
 `stable-backend/` directory.
 
-## How to run locally
+## How to run the application locally
 
 1. Create a Python virtual environment: `python3 -m venv .venv`
 2. Activate the virtual environment: `source .venv/bin/activate`

@@ -8,7 +8,7 @@ void (async () => {
 
     const api = await initializeApi()
 
-    await api.listen(port, () => {
+    api.listen(port, () => {
       console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
     });
 

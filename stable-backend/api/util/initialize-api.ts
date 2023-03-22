@@ -8,10 +8,12 @@ import { socketService } from '../services/socketio.service';
 import http from 'http';
 import { imagesRouter } from '../routes/images.route';
 
-export const initializeApi = async (): Promise<http.Server> => {
-  await redisPublisher.init();
-  await redisSubscriber.init();
-  console.log('Redis connections successfully established.');
+export const initializeApi = async (testing?: boolean): Promise<http.Server> => {
+  if (!testing) {
+    await redisPublisher.init();
+    await redisSubscriber.init();
+    console.log('Redis connections successfully established.');
+  }
 
   const expressServer: Express = express();
 

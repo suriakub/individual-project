@@ -5,7 +5,7 @@ GitHub: https://github.com/suriakub/individual-project
 #### System requirements
 
 - RAM: 16GB
-- GPU: 8GB VRAM
+- GPU: NVidia or M1 with 8GB VRAM
 
 #### Prerequisites
 
@@ -18,7 +18,7 @@ GitHub: https://github.com/suriakub/individual-project
 
 If you use a computer with an NVidia GPU, you can run the application locally using Docker compose.
 
-To do this, navigate into the project's top-level directory (`/individual-project`) and run: 
+To do this, navigate into the project's top-level directory (`individual-project/`) and run: 
 
 `docker compose up -d`
 
