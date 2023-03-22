@@ -5,7 +5,7 @@ GitHub: https://github.com/suriakub/individual-project
 #### System requirements
 
 - RAM: 16GB
-- GPU: NVidia or M1 with 8GB VRAM
+- GPU: NVidia with 6GB VRAM
 
 #### Prerequisites
 

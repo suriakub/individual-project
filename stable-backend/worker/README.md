@@ -2,7 +2,7 @@
 
 #### System requirements
 - RAM: 16GB
-- GPU: NVidia or M1 with 8GB VRAM
+- GPU: NVidia  with 6GB VRAM
 
 #### Prerequisites
 
@@ -26,8 +26,7 @@ The worker supports several environment variables that can change its behaviour.
 
 - `MODEL` - a HuggingFace Hub model to be used to instantiate the diffusion pipelines.
 
-- `USE_FLOAT16` - set this to `false` if you get errors about CUDA out of memory. It controls the floating point precision of the model.
-It will use less GPU memory at the cost of image quality.
+- `USE_FLOAT16` - set this to `false` if you get errors about CUDA out of memory. It controls the floating point precision of the model and if set to `false`, the process will use less GPU memory at the cost of image quality.
 
 - `IMAGE_FREQUENCY` - controls the frequency at which images are sent throughout the generation process.
 
