@@ -300,8 +300,8 @@ Supported
 
 ## 23 Mar 2023
 
-* *6 hours* dissertation
+* *12 hours* dissertation
 
 ## 24 Mar 2023
 
-* *3 hours* dissertation
+* *8 hours* dissertation
